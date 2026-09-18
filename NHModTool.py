@@ -14,7 +14,7 @@ from tkinter import ttk, filedialog, messagebox
 
 import UnityPy
 from i18n import t, load_language, get_current_language
-from PIL import Image, ImageTk
+from PIL import Image, ImageDraw, ImageTk
 
 APP_VERSION = "0.4.0"
 APP_TITLE = "No, I'm not a Human - Mod Tool"
@@ -696,6 +696,7 @@ class App:
         self.layout_job = None
         self.zoom_job = None
         self.zoom_batch_id = 0
+        self.zoom_rdr_pending = False
 
         self.zip_file = None
         self.zip_matches = []
@@ -1009,7 +1010,7 @@ class App:
         self.gallery_loading_label.pack_forget()
         
         self.canvas = tk.Canvas(gallery_host, bg=COLORS["card"], highlightthickness=0, takefocus=1)
-        vbar = ttk.Scrollbar(gallery_host, orient=tk.VERTICAL, command=self.canvas.yview)
+        vbar = ttk.Scrollbar(gallery_host, orient=tk.VERTICAL, command=self._yview)
         self.canvas.configure(yscrollcommand=vbar.set)
         vbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -1079,7 +1080,12 @@ class App:
                 self.zoom_step(-1 if evt.delta > 0 else 1)
             else:
                 self.canvas.yview_scroll(int(-evt.delta / 120), "units")
+                self.root.after(40, self._repair_visible_cells)
         self.wheel_id = self.canvas.bind_all("<MouseWheel>", handle)
+
+    def _yview(self, *args):
+        self.canvas.yview(*args)
+        self.root.after(40, self._repair_visible_cells)
 
     def unbind_wheel(self):
         if self.wheel_id is not None:
@@ -1125,14 +1131,15 @@ class App:
         cap_font = tkfont.Font(family=FONT, size=label_font)
         line_h = cap_font.metrics("linespace")
         for card in self.cards.values():
+            dirty = card["cell_w"] != cell_w or card["cell_h"] != cell_h
             card["cell_w"] = cell_w
             card["cell_h"] = cell_h
             card["line_h"] = line_h
             card["cap_h"] = len(card["lines"]) * line_h + 6
             card["card_h"] = cell_h + card["cap_h"]
             card["label_font"] = label_font
+            card["img_dirty"] = card.get("img_dirty", False) or dirty
         names = [name for name in self.visible_names if name in self.cards]
-        names += [name for name in self.cards if name not in self.visible_names]
         self.zoom_cursor = 0
 
         def step():
@@ -1141,15 +1148,19 @@ class App:
             end_at = min(self.zoom_cursor + 48, len(names))
             for name in names[self.zoom_cursor:end_at]:
                 card = self.cards.get(name)
-                if card is None:
+                if card is None or not card.get("img_dirty"):
                     continue
                 src_img = self.images.get(name)
                 if src_img is None:
                     continue
-                img_n = ImageTk.PhotoImage(make_cell(src_img, COLORS["cell_norm"], cell_w, cell_h))
-                img_s = ImageTk.PhotoImage(make_cell(src_img, COLORS["cell_sel"], cell_w, cell_h))
+                try:
+                    img_n = ImageTk.PhotoImage(make_cell(src_img, COLORS["cell_norm"], cell_w, cell_h))
+                    img_s = ImageTk.PhotoImage(make_cell(src_img, COLORS["cell_sel"], cell_w, cell_h))
+                except Exception:
+                    continue
                 card["img_n"] = img_n
                 card["img_s"] = img_s
+                card["img_dirty"] = False
                 self.image_refs.append(img_n)
                 self.image_refs.append(img_s)
                 self.canvas.itemconfigure(card["img_item"],
@@ -1157,8 +1168,40 @@ class App:
             self.zoom_cursor = end_at
             if end_at < len(names):
                 self.root.after(16, step)
+            else:
+                self.zoom_rdr_pending = False
 
+        self.zoom_rdr_pending = True
         step()
+
+    def _repair_visible_cells(self):
+        """Rebuild cell images only for visible cards whose photo is stale
+        (e.g. zoomed then scrolled into view). Bounded to on-screen cards."""
+        if self.zoom_rdr_pending:
+            return
+        try:
+            _, _, cell_w, cell_h, _ = self._card_metrics()
+            for name in self.visible_names:
+                card = self.cards.get(name)
+                if card is None or not card.get("img_dirty"):
+                    continue
+                src_img = self.images.get(name)
+                if src_img is None:
+                    continue
+                try:
+                    img_n = ImageTk.PhotoImage(make_cell(src_img, COLORS["cell_norm"], cell_w, cell_h))
+                    img_s = ImageTk.PhotoImage(make_cell(src_img, COLORS["cell_sel"], cell_w, cell_h))
+                except Exception:
+                    continue
+                card["img_n"] = img_n
+                card["img_s"] = img_s
+                card["img_dirty"] = False
+                self.image_refs.append(img_n)
+                self.image_refs.append(img_s)
+                self.canvas.itemconfigure(card["img_item"],
+                                          image=img_s if name == self.selected else img_n)
+        except tk.TclError:
+            pass
 
     def refresh_gallery(self):
         if self.filter_job is not None:
@@ -1209,6 +1252,7 @@ class App:
         else:
             self.canvas.itemconfigure(self.empty_text, state=tk.HIDDEN)
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        self._repair_visible_cells()
 
     def _card_metrics(self):
         card_w = max(60, int(CARD_W * self.zoom))
@@ -1244,7 +1288,9 @@ class App:
         self.canvas.itemconfigure(card["sel_item"], state=tk.NORMAL if is_sel else tk.HIDDEN)
 
     def on_canvas_click(self, evt):
-        hits = self.canvas.find_overlapping(evt.x, evt.y, evt.x, evt.y)
+        x = self.canvas.canvasx(evt.x)
+        y = self.canvas.canvasy(evt.y)
+        hits = self.canvas.find_overlapping(x, y, x, y)
         for item_id in reversed(hits):
             name = self.card_items.get(item_id)
             if name is not None:
@@ -1280,7 +1326,7 @@ class App:
                                 "img_item": img_item, "cap_item": cap_item, "sel_item": sel_item,
                                 "cell_w": cell_w, "cell_h": cell_h, "label_font": label_font,
                                 "lines": lines, "cap_h": cap_h, "card_h": cell_h + cap_h,
-                                "sel": False, "x": 0, "y": 0}
+                                "sel": False, "x": 0, "y": 0, "img_dirty": False}
         self.refresh_gallery()
 
     def select_card(self, name):
@@ -1431,6 +1477,16 @@ class App:
         if src is None:
             return
         self.preview_in_label(self.lbl_prev_new, src, 320, 240)
+
+    def _make_checkerboard(self, width, height, square=8):
+        """Şeffaflık arkaplanı için dama deseni oluşturur."""
+        img = Image.new("RGB", (width, height), (60, 60, 60))
+        draw = ImageDraw.Draw(img)
+        for y in range(0, height, square):
+            for x in range(0, width, square):
+                if ((x // square) + (y // square)) % 2 == 0:
+                    draw.rectangle([x, y, x + square - 1, y + square - 1], fill=(80, 80, 80))
+        return img
 
     def preview_in_label(self, label, img, maxg, maxy):
         copy = img.copy()
