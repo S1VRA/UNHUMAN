@@ -145,6 +145,13 @@ UNHUMAN/
 - 🔒 [Security policy](SECURITY.md)
 - 📜 [Changelog](CHANGELOG.md)
 
+## Antivirüs
+
+⚠️ **Antivirus False Positives**
+- Some ML-based engines (Bkav Pro, SecureAge) may flag this EXE as malware.
+- This is a **false positive** affecting all PyInstaller apps.
+- Source: https://github.com/S1VRA/UNHUMAN
+
 ## License
 
 MIT License. See [LICENSE](LICENSE) for details.
