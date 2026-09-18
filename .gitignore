@@ -1,0 +1,74 @@
+# Build artifacts
+build/
+dist/
+*.spec.bak
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Test outputs
+tests/outputs/
+
+# Backups
+backups/
+*.bak
+
+# ═══════════════════════════════════════════════════
+# User runtime data
+# ═══════════════════════════════════════════════════
+data/*
+!data/.gitkeep
+
+
+# Runtime alt klasörleri (95 MB test cache dahil)
+data/cache/
+data/tmp/
+data/thumbnails/
+data/logs/
+data/temp/
+data/*.json
+data/*.log
+data/*.db
+
+# Legacy
+nh_mod_tool_settings.json
+
+# Temporary
+*.tmp
+*.cache
+
+# Oyun asset dosyaları (telif hakkı + boyut)
+*.assets
+*.bundle
+*.unity3d
+*.resource
+sharedassets*
+resources.assets
+
+
+# Oyun klasörleri (eğer yanlışlıkla kopyalanırsa)
+*_Data/
+*_data/

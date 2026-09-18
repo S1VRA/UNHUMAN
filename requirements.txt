@@ -1,0 +1,2 @@
+UnityPy>=0.18
+Pillow>=12.0
