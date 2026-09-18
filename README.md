@@ -145,7 +145,7 @@ UNHUMAN/
 - 🔒 [Security policy](SECURITY.md)
 - 📜 [Changelog](CHANGELOG.md)
 
-## Antivirüs
+## Antivirus
 
 ⚠️ **Antivirus False Positives**
 - Some ML-based engines (Bkav Pro, SecureAge) may flag this EXE as malware.
