@@ -1,2 +1,8 @@
 UnityPy>=0.18
 Pillow>=12.0
+ttkbootstrap>=2.2,<3
+
+# Build dependencies
+nuitka>=2.4
+ordered-set>=4.1
+zstandard>=0.22

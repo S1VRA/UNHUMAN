@@ -1,51 +1,34 @@
 <p align="center">
-  <img src="assets/banner.png" alt="NH Mod Tool - No, I'm not a Human" width="100%">
+  <a href="https://github.com/S1VRA/UNHUMAN/releases"><img src="https://img.shields.io/badge/version-0.5.0-blue" alt="Version"></a>
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
+  <img src="https://img.shields.io/badge/python-3.14+-blue" alt="Python">
 </p>
-
-
-<p align="center">
-  <a href="https://github.com/S1VRA/UNHUMAN/releases"><img src="https://img.shields.io/badge/Version-0.4.0-blue" alt="Version"></a>
-  <img src="https://img.shields.io/badge/Python-3.14+-blue?logo=python&logoColor=white" alt="Python">
-  <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
-  <img src="https://img.shields.io/badge/Platform-Windows-lightgrey" alt="Platform">
-</p>
-
 
 <h1 align="center">NH Mod Tool</h1>
 
-
 <p align="center">
-  A modern mod management tool for <b>"No, I'm not a Human"</b>, built with tkinter/ttk and an Obsidian dark theme.
+  A modern mod management tool for <b>"No, I'm not a Human"</b>, built with tkinter/ttk and ttkbootstrap (darkly theme).
 </p>
 
 ---
 
 ## English
 
-### Features
+### What it does
+- Replace in-game character images with your photos, one at a time
+- Apply many ready-made character images from a ZIP at once
+- Automatic backup before every change, restore anytime via Mod Manager
+- English + Turkish interface
 
-- **Photo Pack ZIP Import** – Import photo packs from `.zip` archives with automatic extraction and validation.
-- **Mod Manager** – Enable, disable, install, and uninstall mods through a clean tabular interface.
-- **Game Status** – Real-time detection of game installation, version, and running process.
-- **Obsidian Dark Theme** – A polished dark UI built with tkinter/ttk styling.
-- **i18n Support** – Full localization with English and Turkish language packs.
-- **Settings** – Configure default directories, theme preferences, and backup intervals.
+## Installation
 
-### Installation
-
-#### Option 1: Download Pre-built EXE (Recommended)
-
+### Windows Installer (Recommended)
 1. Go to the [Releases page](https://github.com/S1VRA/UNHUMAN/releases)
-2. Download `NHModTool_v0.4.0_win64.zip`
-3. Extract the archive
-4. Run `NHModTool.exe`
+2. Download `NHModTool_v0.5.0_Setup.exe`
+3. Double-click and follow the setup wizard
+4. A Start Menu shortcut will be created
 
-> ⚠️ **Windows SmartScreen warning:** On first launch, Windows may show
-> "Windows protected your PC". Click "More info" → "Run anyway". This is
-> normal for all open-source EXEs without a code signing certificate.
-
-#### Option 2: Run from Source (For Developers)
-
+### From Source (For Developers)
 ```bash
 git clone https://github.com/S1VRA/UNHUMAN.git
 cd UNHUMAN
@@ -53,45 +36,53 @@ pip install -r requirements.txt
 python NHModTool.py
 ```
 
-### Usage
+## Usage
+1. Open **Settings** → select your game file (auto-detected via Scan)
+2. **Photo Mods** → pick a character + a photo → Apply
+3. Or **Photo Pack (ZIP)** → choose a ZIP → Apply ZIP to Game
 
-```bash
-python NHModTool.py
-```
+## Antivirus Notice
+NH Mod Tool is an unsigned open-source application. Some antivirus engines (especially Microsoft Defender) may flag Python-packaged EXEs as suspicious. This is a **false positive** affecting all PyInstaller/Nuitka apps. The source code is fully available for review.
 
-### Build
+## FAQ
 
-```bash
-build_release.bat
-```
+### Windows SmartScreen warning
+This is normal for unsigned apps. Windows shows "Windows protected your PC". Click "More info" → "Run anyway".
+
+### Does the game file get modified?
+Yes, but every change creates an automatic `.bak` backup next to the game file. Mod Manager can restore it anytime.
+
+### Which game version is supported?
+"No, I'm not a Human" — any Unity-based version with a `sharedassets0.assets` file.
+
+## Contributing
+See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## License
+MIT — see [LICENSE](LICENSE)
+
+## Contact
+Use [GitHub Issues](https://github.com/S1VRA/UNHUMAN/issues) for questions and bug reports.
 
 ---
 
 ## Türkçe
 
-### Özellikler
+### Ne işe yarar
+- Oyun içi karakter görsellerini fotoğraflarınızla tek tek değiştirin
+- Birçok hazır karakter görselini ZIP'ten tek seferde uygulayın
+- Her değişiklikten önce otomatik yedek, Mod Yöneticisi'nden her zaman geri yükleyin
+- İngilizce + Türkçe arayüz
 
-- **Photo Pack ZIP İçe Aktarma** – `.zip` arşivlerinden otomatik çıkarma ve doğrulama ile fotoğraf paketlerini içe aktarın.
-- **Mod Yöneticisi** – Temiz bir arayüz üzerinden modları etkinleştirin, devre dışı bırakın, yükleyin ve kaldırın.
-- **Oyun Durumu** – Oyun kurulumu, sürümü ve çalışan process hakkında gerçek zamanlı tespit.
-- **Obsidian Karanlık Tema** – tkinter/ttk ile oluşturulmuş şık bir karanlık arayüz.
-- **i18n Desteği** – İngilizce ve Türkçe dil paketleriyle tam yerelleştirme.
-- **Ayarlar** – Varsayılan dizinleri, tema tercihlerini ve yedekleme aralıklarını yapılandırın.
+## Kurulum
 
-### Kurulum
-
-#### Seçenek 1: Hazır EXE İndir (Önerilen)
-
+### Windows Kurulum Dosyası (Önerilen)
 1. [Releases sayfasına](https://github.com/S1VRA/UNHUMAN/releases) gidin
-2. `NHModTool_v0.4.0_win64.zip` dosyasını indirin
-3. Arşivi çıkarın
-4. `NHModTool.exe` dosyasını çalıştırın
+2. `NHModTool_v0.5.0_Setup.exe` indirin
+3. Çift tıklayın, kurulum sihirbazını takip edin
+4. Başlat menüsüne kısayol eklenir
 
-> ⚠️ **Windows SmartScreen uyarısı:** İlk çalıştırmada "Windows korumalı seni"
-> uyarısı çıkabilir. "Ek bilgi" → "Yine de çalıştır" seçin.
-
-#### Seçenek 2: Kaynaktan Çalıştır (Geliştiriciler için)
-
+### Kaynaktan Çalıştırma (Geliştiriciler için)
 ```bash
 git clone https://github.com/S1VRA/UNHUMAN.git
 cd UNHUMAN
@@ -99,63 +90,30 @@ pip install -r requirements.txt
 python NHModTool.py
 ```
 
-### Kullanım
+## Kullanım
+1. **Ayarlar** → oyun dosyanızı seçin (Tarama ile otomatik bulunur)
+2. **Fotoğraf Modları** → karakter + fotoğraf seçin → Uygula
+3. ya da **Fotoğraf Paketi (ZIP)** → ZIP seçin → ZIP'i Oyuna Uygula
 
-```bash
-python NHModTool.py
-```
+## Antivirüs Uyarısı
+NH Mod Tool imzasız bir açık kaynak uygulamadır. Bazı antivirüs motorları (özellikle Microsoft Defender) Python ile paketlenmiş EXE'leri yanlışlıkla şüpheli olarak işaretleyebilir. Bu bir **false positive**'dir. Kaynak kod tamamen açıktır.
 
-### Derleme
+## SSS
 
-```bash
-build_release.bat
-```
+### Windows SmartScreen uyarısı görüyorum
+Bu normaldir. "Windows bilgisayarınızı korudu" uyarısı çıkar. "Ek bilgi" → "Yine de çalıştır" diyerek devam edebilirsiniz.
 
----
+### Oyun dosyası değişiyor mu?
+Evet, ama her değişiklikten önce otomatik `.bak` yedeği alınır. Mod Yöneticisi sekmesinden her zaman geri yükleyebilirsiniz.
 
-### Project Structure
+### Hangi oyun sürümü destekleniyor?
+"No, I'm not a Human" — Unity tabanlı, `sharedassets0.assets` dosyası olan tüm sürümler.
 
-```
-UNHUMAN/
-├── assets/       # Banner and images
-├── data/         # Runtime user data (git-ignored)
-├── dist/         # Built executables (git-ignored)
-├── docs/         # Documentation
-├── locales/      # Translation files (en.json, tr.json)
-├── scripts/      # Build and utility scripts
-├── tests/        # Test files
-├── NHModTool.py  # Main application
-├── theme.py      # Obsidian theme definitions
-├── i18n.py       # Localization engine
-└── requirements.txt
-```
+## Katkıda Bulunma
+Bkz. [CONTRIBUTING.md](CONTRIBUTING.md)
 
----
+## Lisans
+MIT — bkz. [LICENSE](LICENSE)
 
-## Screenshots
-
-> Screenshots coming soon.
-
----
-
-## Links
-
-- 🐛 [Report a bug](https://github.com/S1VRA/UNHUMAN/issues/new?template=bug_report.md)
-- 💡 [Request a feature](https://github.com/S1VRA/UNHUMAN/issues/new?template=feature_request.md)
-- 🔒 [Security policy](SECURITY.md)
-- 📜 [Changelog](CHANGELOG.md)
-
-## Antivirus
-
-⚠️ **Antivirus False Positives**
-- Some ML-based engines (Bkav Pro, SecureAge) may flag this EXE as malware.
-- This is a **false positive** affecting all PyInstaller apps.
-- Source: https://github.com/S1VRA/UNHUMAN
-
-## License
-
-MIT License. See [LICENSE](LICENSE) for details.
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+## İletişim
+Sorular ve hata bildirimleri için [GitHub Issues](https://github.com/S1VRA/UNHUMAN/issues) kullanın.

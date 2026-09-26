@@ -17,6 +17,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.0] - 2026-09-26
+
+### Added
+
+- Settings schema validation for `settings.json`.
+- Managed-root safety gate for recursive delete (`rmtree`) operations.
+- Centralized logging under `%APPDATA%\NHModTool\logs` with a
+  `RotatingFileHandler`, plus a global exception handler covering
+  `sys` hooks, threading, and Tk callbacks.
+- UI modernization: Primary/Secondary/Danger/Ghost button categories,
+  focus rings, empty-state screens, DPI awareness, persisted window
+  position/size, and a responsive grid layout.
+- Single source of truth for theming via `theme.py`.
+- Turkish localization (full EN/TR parity).
+- Windows Installer via Inno Setup (replaces zip distribution).
+- Nuitka standalone build (replaces PyInstaller).
+- Settings schema validation for `settings.json`.
+- Managed-root safety gate for recursive delete operations.
+- Centralized logging under `%APPDATA%\NHModTool\logs`.
+- Global exception handlers (sys, threading, Tk callbacks).
+
+### Changed
+
+- Migrated from custom ttk themes to ttkbootstrap (darkly theme).
+- All user-facing strings moved to locale files (EN/TR) with strict key
+  and placeholder parity; no hardcoded UI text left in the source.
+- UI layer rebuilt around the shared theme module and button taxonomy.
+- Packaging: Nuitka standalone + Inno Setup installer (replaces PyInstaller).
+
+### Fixed
+
+- ZIP Slip path traversal blocked during photo-pack extraction.
+- ZIP bomb protection (size/ratio limits) during import.
+- Magic-byte validation for assets and ZIP imports.
+- Turkish/English UI text no longer leaks into the other locale.
+- ZIP Slip path traversal.
+- ZIP bomb protection.
+- Magic-byte validation for assets.
+- Locale text leakage.
+
+### Removed
+
+- Legacy apply_obsidian_theme function.
+- PyInstaller spec file.
+- Dead code (shadowed `preview_in_label`, unused `_make_checkerboard`, `DATA_DIR_LOW`).
+
+---
+
 ## [0.4.0] - 2026-09-18
 
 ### Added

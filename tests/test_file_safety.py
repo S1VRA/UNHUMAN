@@ -106,5 +106,44 @@ class BackupRestoreCycleTest(unittest.TestCase):
         self.assertFalse(os.path.exists(self.game + ".tmp"))
 
 
+class ManagedRootSafetyTest(unittest.TestCase):
+    """is_under_managed_root gate that must precede every shutil.rmtree call."""
+
+    def setUp(self):
+        import tempfile
+        self.tmp = tempfile.mkdtemp(prefix="nh_root_")
+        self.outer = tempfile.mkdtemp(prefix="nh_outer_")
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.outer, ignore_errors=True)
+        if os.path.isdir(self.tmp):
+            shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_rmtree_under_managed_root_ok(self):
+        sub = os.path.join(self.tmp, "cache", "thumb")
+        os.makedirs(sub)
+        self.assertTrue(app.is_under_managed_root(sub, [self.tmp]))
+
+    def test_rmtree_outside_managed_root_blocked(self):
+        self.assertFalse(app.is_under_managed_root(self.outer, [self.tmp]))
+        self.assertTrue(os.path.isdir(self.outer))  # target must survive
+
+    def test_rmtree_symlink_escape_blocked(self):
+        link = os.path.join(self.tmp, "escape")
+        try:
+            os.symlink(self.outer, link, target_is_directory=True)
+        except (OSError, NotImplementedError):
+            self.skipTest("symlinks unavailable (Windows needs Developer Mode)")
+        self.assertFalse(app.is_under_managed_root(link, [self.tmp]))
+        self.assertTrue(os.path.isdir(self.outer))
+
+    def test_rmtree_nonexistent_path_no_crash(self):
+        import shutil
+        missing = os.path.join(self.tmp, "does", "not", "exist")
+        app.is_under_managed_root(missing, [self.tmp])  # must not raise
+        shutil.rmtree(missing, ignore_errors=True)  # must not raise either
+
+
 if __name__ == "__main__":
     unittest.main()

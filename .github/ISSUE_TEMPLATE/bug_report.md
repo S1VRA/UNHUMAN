@@ -29,5 +29,5 @@ If applicable, add screenshots to help explain your problem.
 
 - **OS**: Windows 10/11
 - **Python Version**: 3.14
-- **NH Mod Tool Version**: 0.4.0
+- **NH Mod Tool Version**: <fill in>
 - **tkinter Version**: (Python 3.14 built-in)
