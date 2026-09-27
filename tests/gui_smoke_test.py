@@ -11,7 +11,10 @@ import subprocess
 import psutil
 
 def test_gui_launch():
-    exe = r"C:\Users\mehmet\Desktop\UNHUMAN\dist\NHModTool.exe"
+    base = r"C:\Users\mehmet\Desktop\UNHUMAN\dist"
+    exe = os.path.join(base, "NHModTool.dist", "NHModTool.exe")
+    if not os.path.exists(exe):
+        exe = os.path.join(base, "NHModTool.exe")
     print(f"Launching {exe}...")
     
     proc = subprocess.Popen([exe])

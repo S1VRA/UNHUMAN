@@ -18,10 +18,9 @@ import ttkbootstrap as ttkb
 import UnityPy
 from i18n import t, load_language, get_current_language
 from PIL import Image, ImageDraw, ImageTk
-from theme import PALETTE, TYPOGRAPHY, SPACING
+from theme import PALETTE, TYPOGRAPHY
 
 APP_VERSION = "0.5.0"
-APP_TITLE = "No, I'm not a Human - Mod Tool"
 APP_NAME = "NH Mod Tool"
 APP_DATA_DIR_NAME = "NHModTool"
 ASSETS_NAME = "sharedassets0.assets"
@@ -300,12 +299,6 @@ def fmt_name(fmt):
     names = {98: "RGBA", 12: "DXT5", 29: "DXT5Crunched", 28: "DXT1", 62: "DXT1Crunched", 47: "BC7",
              3: "RGB24", 4: "RGBA32", 13: "RGBA4444", 1: "Alpha8"}
     return names.get(fmt, "fmt%d" % fmt)
-
-
-def _add_listbox_hover(listbox, enter_bg, leave_bg):
-    """Add simple hover highlighting to listbox items."""
-    listbox.bind("<Enter>", lambda e: listbox.config(background=enter_bg))
-    listbox.bind("<Leave>", lambda e: listbox.config(background=leave_bg))
 
 
 def object_snapshots(path):

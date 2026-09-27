@@ -7,7 +7,7 @@ import unittest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import NHModTool as app  # noqa: E402
-from theme import PALETTE, TYPOGRAPHY, SPACING  # noqa: E402
+from theme import PALETTE, TYPOGRAPHY  # noqa: E402
 
 
 class PathHelpersTest(unittest.TestCase):
