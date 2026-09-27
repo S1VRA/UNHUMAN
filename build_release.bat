@@ -21,6 +21,10 @@ python -m nuitka ^
   --include-package-data=UnityPy ^
   --include-package=astc_encoder ^
   --include-package-data=astc_encoder ^
+  --include-module=astc_encoder._encoder_none ^
+  --include-module=astc_encoder._encoder_avx2 ^
+  --include-module=astc_encoder._encoder_sse2 ^
+  --include-module=astc_encoder._encoder_sse41 ^
   --include-package=fmod_toolkit ^
   --include-package-data=fmod_toolkit ^
   --include-package=PIL ^
