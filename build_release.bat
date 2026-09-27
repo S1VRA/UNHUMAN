@@ -19,6 +19,8 @@ python -m nuitka ^
   --include-package-data=ttkbootstrap ^
   --include-package=UnityPy ^
   --include-package-data=UnityPy ^
+  --include-package=astc_encoder ^
+  --include-package-data=astc_encoder ^
   --include-package=fmod_toolkit ^
   --include-package-data=fmod_toolkit ^
   --include-package=PIL ^
