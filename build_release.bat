@@ -14,6 +14,11 @@ echo [1/2] Nuitka ile derleniyor... (5-10 dakika sürebilir)
 python -m nuitka ^
   --standalone ^
   --enable-plugin=tk-inter ^
+  --windows-console-mode=disable ^
+  --include-package=ttkbootstrap ^
+  --include-package-data=ttkbootstrap ^
+  --include-package=UnityPy ^
+  --include-package-data=UnityPy ^
   --windows-icon-from-ico=NHModTool.ico ^
   --windows-company-name=S1VRA ^
   --windows-product-name="NH Mod Tool" ^
@@ -23,7 +28,6 @@ python -m nuitka ^
   --output-dir=dist ^
   --output-filename=NHModTool.exe ^
   --assume-yes-for-downloads ^
-  --zig ^
   NHModTool.py
 
 if not exist "dist\NHModTool\NHModTool.exe" (

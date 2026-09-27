@@ -34,7 +34,7 @@ _TARGET_NORMS = {"noimnotahuman", "noimnotahuman_data"}
 def _norm_dirname(name):
     return re.sub(r"[^a-z0-9]", "", name.lower())
 
-_IS_FROZEN = bool(getattr(sys, "frozen", False))
+_IS_FROZEN = bool(getattr(sys, "frozen", False) or "__compiled__" in globals())
 if _IS_FROZEN:
     PROJECT_DIR = os.path.dirname(os.path.abspath(sys.executable))
     BUNDLE_DIR = getattr(sys, "_MEIPASS", PROJECT_DIR)
