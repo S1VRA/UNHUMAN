@@ -19,6 +19,16 @@ python -m nuitka ^
   --include-package-data=ttkbootstrap ^
   --include-package=UnityPy ^
   --include-package-data=UnityPy ^
+  --include-package=fmod_toolkit ^
+  --include-package-data=fmod_toolkit ^
+  --include-package=PIL ^
+  --include-package-data=PIL ^
+  --include-package=numpy ^
+  --include-package-data=numpy ^
+  --include-package=archspec ^
+  --include-package-data=archspec ^
+  --include-data-dir="C:\Users\mehmet\AppData\Roaming\Python\Python314\site-packages\archspec"="archspec" ^
+  --include-data-files="C:\Users\mehmet\AppData\Roaming\Python\Python314\site-packages\fmod_toolkit\libfmod\Windows\x64\fmod.dll"="fmod_toolkit/libfmod/Windows/x64/fmod.dll" ^
   --windows-icon-from-ico=NHModTool.ico ^
   --windows-company-name=S1VRA ^
   --windows-product-name="NH Mod Tool" ^
@@ -30,7 +40,7 @@ python -m nuitka ^
   --assume-yes-for-downloads ^
   NHModTool.py
 
-if not exist "dist\NHModTool\NHModTool.exe" (
+if not exist "dist\NHModTool.dist\NHModTool.exe" (
     echo.
     echo [HATA] Build başarısız - EXE oluşmadı!
     pause
@@ -39,13 +49,13 @@ if not exist "dist\NHModTool\NHModTool.exe" (
 
 echo.
 echo [2/2] SHA-256 hash üretiliyor...
-powershell -Command "Get-FileHash 'dist\NHModTool\NHModTool.exe' -Algorithm SHA256 | Out-File -Encoding utf8 dist\SHA256SUMS.txt"
+powershell -Command "Get-FileHash 'dist\NHModTool.dist\NHModTool.exe' -Algorithm SHA256 | Out-File -Encoding utf8 dist\SHA256SUMS.txt"
 
 echo.
 echo ==========================================
 echo   BUILD BAŞARILI
 echo ==========================================
-echo EXE konumu: dist\NHModTool\NHModTool.exe
+echo EXE konumu: dist\NHModTool.dist\NHModTool.exe
 echo Hash: dist\SHA256SUMS.txt
 echo.
 pause
