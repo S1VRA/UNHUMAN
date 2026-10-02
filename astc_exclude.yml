@@ -1,0 +1,22 @@
+# Nuitka package configuration: strip the top-level astc_encoder import from
+# UnityPy's Texture2DConverter.
+#
+# Why this is needed:
+#   UnityPy/export/Texture2DConverter.py line 9 has a top-level
+#   "import astc_encoder". --nofollow-import-to=astc_encoder only stops Nuitka
+#   from *following* the module; the import statement itself stays in the
+#   compiled binary and raises ImportError at runtime on every import of the
+#   module, which breaks decoding for *all* texture formats - not just ASTC.
+#
+#   The game ships no ASTC textures (observed formats are RGBA32 and DXT5), so
+#   the encoder is dead weight. Removing the import statement leaves
+#   compress_astc()/astc() unreachable, which is acceptable for this title.
+#
+# Rebuild with: .\build_release.bat
+---
+- module-name: 'UnityPy.export.Texture2DConverter'
+  anti-bloat:
+    - description: 'drop top-level astc_encoder import (module excluded from build)'
+      replacements_plain:
+        'import astc_encoder': ''
+        'from astc_encoder import': ''

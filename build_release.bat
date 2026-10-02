@@ -11,6 +11,9 @@ if exist NHModTool.build rmdir /s /q NHModTool.build
 if exist NHModTool.dist rmdir /s /q NHModTool.dist
 
 echo [1/2] Nuitka ile derleniyor... (5-10 dakika sürebilir)
+REM astc_encoder haric tutuluyor: oyunda ASTC texture yok (RGBA32/DXT5).
+REM --nofollow-import-to tek basina yetmez, top-level import satiri kodda kalir ve
+REM AVX2 olmayan CPU'da ImportError verir. astc_exclude.yml o satiri siler.
 python -m nuitka ^
   --standalone ^
   --enable-plugin=tk-inter ^
@@ -19,12 +22,8 @@ python -m nuitka ^
   --include-package-data=ttkbootstrap ^
   --include-package=UnityPy ^
   --include-package-data=UnityPy ^
-  --include-package=astc_encoder ^
-  --include-package-data=astc_encoder ^
-  --include-module=astc_encoder._encoder_none ^
-  --include-module=astc_encoder._encoder_avx2 ^
-  --include-module=astc_encoder._encoder_sse2 ^
-  --include-module=astc_encoder._encoder_sse41 ^
+  --nofollow-import-to=astc_encoder ^
+  --user-package-configuration-file=astc_exclude.yml ^
   --include-package=fmod_toolkit ^
   --include-package-data=fmod_toolkit ^
   --include-package=PIL ^
