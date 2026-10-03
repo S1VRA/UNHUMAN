@@ -30,7 +30,7 @@ Artık ZIP çıkarmaya gerek yok. Setup.exe'yi indirin, çift tıklayın, bitti.
 
 **Eklendi**
 - Global exception handler (`sys`, `threading`, `Tk` callback'leri)
-- `%APPDATA%\NHModTool\logs` altında döner log dosyası (5 MB × 3)
+- `%APPDATA%\NHModTool\logs` altında döner log dosyası (`app.log` + 2 yedek, her biri 1 MB üst sınır)
 - Pencere boyutu ve konumu hatırlanıyor
 - Boş durum ekranları — ne yapacağınızı söyleyen yönlendirmeler
 - `theme.py` — tüm renk, tipografi ve boşluk token'ları tek yerde
@@ -66,6 +66,16 @@ Windows SmartScreen ilk seferde uyarabilir. **"Ek bilgi" → "Yine de çalışt�
 
 - **Microsoft Defender** bazen kurulum dosyasını şüpheli olarak işaretleyebilir. Bu, imzasız tüm Python uygulamalarında görülen bir **yanlış alarmdır.** Kaynak kodu açık, kendiniz derleyebilirsiniz.
 - İlk açılışta ayarlarınız yeniden düzenlenebilir — `%APPDATA%\NHModTool`'a taşındı.
+
+## 🩺 Sorun Giderme
+
+Sorun bildirirken log dosyasını ekleyin:
+
+```
+%APPDATA%\NHModTool\logs\app.log
+```
+
+Ayrıntılı (DEBUG) log için `NHMODTOOL_DEBUG` ortam değişkenini tanımlayıp uygulamayı yeniden başlatın.
 
 ---
 

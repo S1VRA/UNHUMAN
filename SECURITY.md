@@ -4,8 +4,12 @@
 
 | Version | Supported          |
 |---------|--------------------|
-| 0.4.x   | ✅ Yes             |
+| 0.5.x   | ✅ Yes             |
+| 0.4.x   | ❌ No              |
 | < 0.4   | ❌ No              |
+
+Only the latest release receives security fixes. Always update to the newest
+version from the [releases page](https://github.com/S1VRA/UNHUMAN/releases).
 
 ## Reporting a Vulnerability
 

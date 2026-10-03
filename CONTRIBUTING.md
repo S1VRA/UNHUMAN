@@ -28,22 +28,52 @@ python NHModTool.py
 
 ```bash
 # Unit tests
-python -m pytest tests/
+python -m pytest tests/test_data_and_history.py tests/test_file_safety.py \
+                 tests/test_packaging.py tests/test_paths_policy.py \
+                 tests/test_zip_pack.py
 
 # Application self-test
 python NHModTool.py --selftest
 
-# Asset decoding test
+# Asset decoding test (reads the real game file)
 python NHModTool.py --assettest
 ```
 
-### Building the EXE
+`tests/` also holds ad-hoc `memory_*.py` / demo scripts that are **not**
+collectable by pytest (`memory_fixed_test.py` references a symbol that no
+longer exists and breaks collection). Run the `test_*.py` files explicitly.
+
+### Continuous Integration
+
+`.github/workflows/python-test.yml` runs on every push and pull request to
+`main` (Windows, Python 3.14). It byte-compiles `NHModTool.py` and `theme.py`
+only — the pytest suite is **not** executed by CI, so run the commands above
+locally before opening a PR.
+
+### Building the Release
+
+Two steps; the first script only covers step 1.
 
 ```bash
+# 1) Nuitka standalone build + SHA-256 of the exe
 build_release.bat
 ```
 
-Output: `dist/NHModTool.exe` (single-file, no dependencies required)
+Output: `dist/NHModTool.dist/NHModTool.exe` **plus its dependency folders**.
+This is a standalone *folder* build, not a single-file executable — ship the
+whole `dist/NHModTool.dist/` directory.
+
+```bash
+# 2) Inno Setup installer from that folder
+iscc installer.iss
+```
+
+Output: `dist/NHModTool_v<version>_Setup.exe` (EN + TR wizard languages,
+Start Menu entry, uninstaller).
+
+`scripts/verify_build.py` performs the post-build checks (embedded icon,
+`--selftest`, `--assettest`, SHA-256). Note it still looks for the obsolete
+`dist/NHModTool.exe` path, so correct its `EXE` constant before relying on it.
 
 ### Code Style
 

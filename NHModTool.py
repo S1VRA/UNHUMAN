@@ -16,6 +16,8 @@ from tkinter import ttk, filedialog, messagebox
 import ttkbootstrap as ttkb
 
 import UnityPy
+from UnityPy.classes import Texture2D
+from UnityPy.enums import TextureFormat
 from i18n import t, load_language, get_current_language
 from PIL import Image, ImageDraw, ImageTk
 from theme import PALETTE, TYPOGRAPHY
@@ -845,12 +847,86 @@ def _find_texture(env, name):
     return None, None
 
 
-def _prep_sheet(img, w, h):
+def _prep_sheet(img: Image.Image, w: int, h: int) -> Image.Image:
+    """Fit ``img`` onto a transparent ``w``x``h`` sheet, keeping its alpha intact.
+
+    The photo is pasted *without* a mask on purpose. The sheet is fully
+    transparent, so a plain paste copies every band verbatim, while a masked
+    paste blends the alpha channel a second time (a half-transparent pixel
+    128 -> 64) and turns every cut-out PNG far more see-through than the
+    author drew it.
+    """
     sheet = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    k = img.copy()
+    k = img.convert("RGBA")
     k.thumbnail((w, h), Image.LANCZOS)
-    sheet.paste(k, ((w - k.width) // 2, (h - k.height) // 2), k)
+    sheet.paste(k, ((w - k.width) // 2, (h - k.height) // 2))
     return sheet
+
+
+# Target formats whose encoder silently drops the alpha channel. Mirrors the
+# branch table in UnityPy's Texture2DConverter.image_to_texture2d: BC1 (DXT1)
+# has no alpha block at all, and the RGB-only families are read back as "RGB".
+_ALPHA_LESS_NAMES: frozenset[str] = frozenset({
+    "DXT1", "DXT1Crunched",
+    "RGB565", "RGB24", "BGR24", "RGB9e5Float",
+    "PVRTC_RGB2", "PVRTC_RGB4",
+})
+_ALPHA_LESS_PREFIXES: tuple[str, ...] = (
+    "ETC_RGB", "ETC2_RGB", "ATC_RGB", "ASTC_RGB",
+)
+
+
+def _texture_format_name(target_format: int) -> str:
+    """Best-effort readable name for a raw Unity TextureFormat id."""
+    try:
+        return TextureFormat(target_format).name
+    except ValueError:
+        return "format %d" % target_format
+
+
+def _format_keeps_alpha(target_format: int) -> bool:
+    """Whether ``target_format`` is able to store a photo's alpha channel."""
+    name = _texture_format_name(target_format)
+    if name in _ALPHA_LESS_NAMES:
+        return False
+    return not name.startswith(_ALPHA_LESS_PREFIXES)
+
+
+def _write_photo(d: Texture2D, img: Image.Image, name: str) -> None:
+    """Commit ``img`` into texture ``d`` at the texture's own pixel dimensions.
+
+    The renderer trusts the size, pixel format and mipmap count stored in the
+    asset, so all three are carried over from the original object instead of
+    being inferred from the upload. Plain ``d.image = sheet`` keeps the format
+    but silently collapses the mipmap chain to a single level, which leaves
+    mipmapped portraits untextured in-game.
+    """
+    orig_w = int(getattr(d, "m_Width", 0) or 0)
+    orig_h = int(getattr(d, "m_Height", 0) or 0)
+    if orig_w <= 0 or orig_h <= 0:
+        raise PhotoPackError(
+            "Character \u201c%s\u201d has no readable texture size." % name)
+
+    if img.size != (orig_w, orig_h):
+        logger.info("Resizing photo for %s from %dx%d to texture size %dx%d",
+                    name, img.width, img.height, orig_w, orig_h)
+    sheet = _prep_sheet(img, orig_w, orig_h)
+
+    target_format = getattr(d, "m_TextureFormat", None)
+    mipmap_count = int(getattr(d, "m_MipCount", 1) or 1)
+    if target_format is not None and not _format_keeps_alpha(int(target_format)):
+        strongest = sheet.getchannel("A").getextrema()[1]
+        if strongest < 255:
+            logger.warning(
+                "Texture %s is stored as %s, which carries no alpha channel: "
+                "photo transparency will be flattened (strongest alpha %d).",
+                name, _texture_format_name(int(target_format)), strongest)
+    d.set_image(
+        sheet,
+        target_format=None if target_format is None else int(target_format),
+        mipmap_count=mipmap_count,
+    )
+    d.save()
 
 
 def _write_env_dump(env, out_dir):
@@ -901,9 +977,7 @@ def _mutate_and_dump(assets_path, mutations, out_dir):
             obj, d = _find_texture(env, name)
             if obj is None:
                 raise PhotoPackError("Character \u201c%s\u201d missing in the game." % name)
-            sheet = _prep_sheet(img, d.image.size[0], d.image.size[1])
-            d.image = sheet
-            d.save()
+            _write_photo(d, img, name)
             targets.add(("Texture2D", obj.path_id))
         output = _write_env_dump(env, out_dir or OUT_DIR)
     finally:
@@ -927,7 +1001,13 @@ def _apply_mutations(assets_path, mutations, out_dir=None):
     return len(targets)
 
 
-def apply_photo_to_file(assets_path, char_name, img, status=None, out_dir=None):
+def apply_photo_to_file(assets_path: str, char_name: str, img: Image.Image,
+                        status: Callable[[str], None] | None = None,
+                        out_dir: str | None = None) -> int:
+    """Write ``img`` over the ``char_name`` texture in the game file.
+
+    Returns the number of modified objects. ``img`` is kept in RGBA so a
+    transparent source PNG keeps its transparency in-game."""
     if status:
         status("Injection \u2026")
     return _apply_mutations(assets_path, [(char_name, img)], out_dir)

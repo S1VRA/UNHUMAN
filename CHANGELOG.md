@@ -33,10 +33,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Turkish localization (full EN/TR parity).
 - Windows Installer via Inno Setup (replaces zip distribution).
 - Nuitka standalone build (replaces PyInstaller).
-- Settings schema validation for `settings.json`.
-- Managed-root safety gate for recursive delete operations.
-- Centralized logging under `%APPDATA%\NHModTool\logs`.
-- Global exception handlers (sys, threading, Tk callbacks).
 
 ### Changed
 
@@ -52,10 +48,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ZIP bomb protection (size/ratio limits) during import.
 - Magic-byte validation for assets and ZIP imports.
 - Turkish/English UI text no longer leaks into the other locale.
-- ZIP Slip path traversal.
-- ZIP bomb protection.
-- Magic-byte validation for assets.
-- Locale text leakage.
 
 ### Removed
 
