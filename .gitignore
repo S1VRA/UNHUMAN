@@ -26,10 +26,13 @@ env/
 .vscode/
 .idea/
 *.swp
+*.swo
+*~
 
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # App runtime data
 data/
@@ -39,15 +42,17 @@ backups/
 # Local
 *.bak
 *.tmp
+.cache
 .env
 S1VRA-CodeSign.cer
 
+# Legacy
+nh_mod_tool_settings.json
+
 # Test outputs
 tests/outputs/
-
-# Backups
-backups/
-*.bak
+assettest_out/
+assettest_report.json
 
 # Oyun asset dosyaları (telif hakkı + boyut)
 *.assets
@@ -60,41 +65,3 @@ resources.assets
 # Oyun klasörleri (eğer yanlışlıkla kopyalanırsa)
 *_Data/
 *_data/
-
-# Legacy
-nh_mod_tool_settings.json
-
-# Temporary
-*.tmp
-*.cache
-
-# OS
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# Logs
-*.log
-
-# Virtual environments
-.venv/
-venv/
-env/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# Nuitka
-*.build/
-*.dist/
-*.onefile-build/
-
-# Build outputs
-build/
-dist/
-release/
-*.spec

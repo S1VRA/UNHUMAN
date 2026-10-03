@@ -1,4 +1,6 @@
 UnityPy>=0.18
+etcpak>=0.9
+texture2ddecoder>=1.0
 Pillow>=12.0
 ttkbootstrap>=2.2,<3
 
