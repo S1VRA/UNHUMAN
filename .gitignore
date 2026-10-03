@@ -1,18 +1,26 @@
-# Build artifacts
-build/
-dist/
-*.spec.bak
-
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-.Python
-venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Build outputs
+build/
+dist/
+release/
+*.spec
+
+# Nuitka
+*.build/
+*.dist/
+*.onefile-build/
+
+# Virtual environments
 .venv/
+venv/
 env/
-ENV/
 
 # IDE
 .vscode/
@@ -26,39 +34,25 @@ ENV/
 Thumbs.db
 desktop.ini
 
-# Logs
+# App runtime data
+data/
+backups/
 *.log
 
-# Test outputs
-tests/outputs/
-
-# Backups
-backups/
+# Local
 *.bak
-
-# ═══════════════════════════════════════════════════
-# User runtime data
-# ═══════════════════════════════════════════════════
-data/*
-!data/.gitkeep
-
-
-# Runtime alt klasörleri (95 MB test cache dahil)
-data/cache/
-data/tmp/
-data/thumbnails/
-data/logs/
-data/temp/
-data/*.json
-data/*.log
-data/*.db
+*.tmp
+.cache
+.env
+S1VRA-CodeSign.cer
 
 # Legacy
 nh_mod_tool_settings.json
 
-# Temporary
-*.tmp
-*.cache
+# Test outputs
+tests/outputs/
+assettest_out/
+assettest_report.json
 
 # Oyun asset dosyaları (telif hakkı + boyut)
 *.assets
@@ -67,7 +61,6 @@ nh_mod_tool_settings.json
 *.resource
 sharedassets*
 resources.assets
-
 
 # Oyun klasörleri (eğer yanlışlıkla kopyalanırsa)
 *_Data/

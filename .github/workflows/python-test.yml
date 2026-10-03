@@ -28,3 +28,11 @@ jobs:
 
       - name: Compile theme.py
         run: python -m py_compile theme.py
+
+      - name: Run tests
+        run: |
+          python -m pytest tests/test_paths_policy.py \
+            tests/test_data_and_history.py \
+            tests/test_file_safety.py \
+            tests/test_zip_pack.py \
+            tests/gui_smoke_test.py -v

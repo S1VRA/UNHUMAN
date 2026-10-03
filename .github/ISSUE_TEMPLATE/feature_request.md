@@ -21,3 +21,9 @@ Describe the solution you'd like, including any UI mockups or workflow changes.
 ## Alternatives
 
 Any alternative solutions or features you've considered.
+
+---
+
+> **Security vulnerabilities do not belong here.** Report them privately via
+> the [GitHub Security Advisory](https://github.com/S1VRA/UNHUMAN/security/advisories/new)
+> as described in [SECURITY.md](../../SECURITY.md).

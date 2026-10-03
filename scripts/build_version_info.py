@@ -10,15 +10,15 @@ APP_DISPLAY_NAME = "NH Mod Tool"
 APP_DESCRIPTION = "No I'm Not A Human - Photo Mod injector / texture switcher"
 APP_COMPANY = "S1VRA"
 APP_COPYRIGHT = "Copyright (c) 2026 S1VRA"
-APP_VERSION = "0.4.0"
+APP_VERSION = "0.5.0"
 
 # PyInstaller requires the version list to be passed via pyi_versioninfo
 from PyInstaller.utils.win32 import versioninfo  # noqa: E402
 
 vs = versioninfo.VSVersionInfo(
     ffi=versioninfo.FixedFileInfo(
-        filevers=(0, 4, 0, 0),
-        prodvers=(0, 4, 0, 0),
+        filevers=(0, 5, 0, 0),
+        prodvers=(0, 5, 0, 0),
         mask=0x3F,
         flags=0x0,
         OS=0x40004,

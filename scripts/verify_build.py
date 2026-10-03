@@ -22,7 +22,12 @@ import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-EXE = os.path.join(ROOT, "dist", "NHModTool.exe")
+# Nuitka onefile writes dist\NHModTool.exe; folder mode writes
+# dist\NHModTool.dist\NHModTool.exe. Prefer the folder-mode path and fall
+# back to the standalone exe so both build styles verify.
+EXE = os.path.join(ROOT, "dist", "NHModTool.dist", "NHModTool.exe")
+if not os.path.exists(EXE):
+    EXE = os.path.join(ROOT, "dist", "NHModTool.exe")
 SHA_FILE = os.path.join(ROOT, "dist", "SHA256SUMS.txt")
 
 WARN_MB = 50

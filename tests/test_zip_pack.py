@@ -117,7 +117,9 @@ class ZipScanTest(unittest.TestCase):
         self.assertEqual(len(r["dupes"]), 1)
 
     def test_large_image_skipped(self):
-        r, _ = self._scan({"fake_neighbour1.png": b"\x00" * 4096})
+        # Incompressible payload: compressible zeros would now trip the
+        # zip-bomb ratio check (MAX_ZIP_RATIO), not the per-image size rule.
+        r, _ = self._scan({"fake_neighbour1.png": os.urandom(4096)})
         with mock.patch.object(app, "MAX_ZIP_IMAGE_BYTES", 64):
             with zipfile.ZipFile(os.path.join(self.tmp, "pack.zip")) as z:
                 r2 = app._scan_zip_for_characters(z, BY_NAME)
@@ -204,6 +206,62 @@ class ZipSafetyTest(unittest.TestCase):
         safe = ["fake_neighbour1.png", "chars/fake_neighbour2.png", "a b.png"]
         for c in safe:
             self.assertFalse(app._is_unsafe_zip_name(c))
+
+
+class ZipSecurityTest(unittest.TestCase):
+    """Zip-slip names, zip-bomb limits and valid-pack acceptance."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp(prefix="nh_zipsec_")
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _scan(self, files):
+        zpath = os.path.join(self.tmp, "pack.zip")
+        _make_zip(zpath, files)
+        with zipfile.ZipFile(zpath) as z:
+            return app._scan_zip_for_characters(z, BY_NAME), zpath
+
+    def test_zip_slip_relative(self):
+        r, _ = self._scan({"../../evil.txt": b"boom"})
+        self.assertIn("../../evil.txt", r["unsafe"])
+        self.assertEqual(r["matches"], [])
+
+    def test_zip_slip_absolute(self):
+        r, _ = self._scan({"/etc/passwd": b"root:x:0:0"})
+        self.assertIn("/etc/passwd", r["unsafe"])
+        self.assertEqual(r["matches"], [])
+
+    def test_zip_slip_windows(self):
+        r, _ = self._scan({"..\\..\\evil.exe": b"MZ"})
+        # zipfile normalizes "\\" to "/" when storing the member name, so it
+        # reaches the scanner as "../../evil.exe"; either form must be blocked.
+        self.assertTrue(any(m.replace("\\", "/") == "../../evil.exe"
+                            for m in r["unsafe"]))
+        self.assertEqual(r["matches"], [])
+
+    def test_zip_bomb_total(self):
+        zpath = os.path.join(self.tmp, "pack.zip")
+        _make_zip(zpath, {"fake_neighbour1.png": _png_bytes()})
+        with zipfile.ZipFile(zpath) as z:
+            with mock.patch.object(app, "MAX_ZIP_TOTAL_BYTES", 16):
+                with self.assertRaises(app.PhotoPackError) as ctx:
+                    app._scan_zip_for_characters(z, BY_NAME)
+        self.assertIn("limit", str(ctx.exception))
+
+    def test_zip_bomb_ratio(self):
+        zpath = os.path.join(self.tmp, "bomb.zip")
+        _make_zip(zpath, {"fake_neighbour1.png": b"\x00" * (8 << 20)})
+        with zipfile.ZipFile(zpath) as z:
+            with self.assertRaises(app.PhotoPackError) as ctx:
+                app._scan_zip_for_characters(z, BY_NAME)
+        self.assertIn("ratio", str(ctx.exception).lower())
+
+    def test_zip_valid_pack(self):
+        r, _ = self._scan({"fake_neighbour1.png": _png_bytes()})
+        self.assertEqual(r["matches"], [("fake_neighbour1", "fake_neighbour1.png")])
+        self.assertEqual(r["unsafe"], [])
 
 
 class ZipEndToEndTest(unittest.TestCase):
